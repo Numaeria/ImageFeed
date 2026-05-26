@@ -9,13 +9,12 @@ import UIKit
 
 final class SingleImageViewController: UIViewController {
     
-    @IBOutlet var imageView: UIImageView!
-    @IBOutlet var scrollView: UIScrollView!
+    @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var scrollView: UIScrollView!
     
     var image: UIImage? {
         didSet {
             guard isViewLoaded else { return }
-            imageView.image = image
         }
     }
     
@@ -32,7 +31,8 @@ final class SingleImageViewController: UIViewController {
     }
     
     @IBAction func didTapBackButton() {
-        dismiss(animated: true, completion: nil)
+        //dismiss(animated: true, completion: nil)
+        dismiss(animated: true)
     }
     
     @IBAction func didTapShareButton(_ sender: UIButton) {
@@ -65,6 +65,6 @@ final class SingleImageViewController: UIViewController {
 
 extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return imageView
+        imageView
     }
 }
