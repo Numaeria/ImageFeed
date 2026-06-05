@@ -17,9 +17,11 @@ final class OAuth2Service {
     
     private init() { }
     
-    func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
+    func fetchAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
         guard let request = makeOAuthTokenRequest(code: code) else {
-            completion(.failure(NetworkError.invalidRequest))
+            DispatchQueue.main.async {
+                completion(.failure(NetworkError.invalidRequest))
+            }
             return
         }
         
@@ -35,11 +37,11 @@ final class OAuth2Service {
                     self.tokenStorage.token = response.accessToken
                     completion(.success(response.accessToken))
                 } catch {
-                    print("[fetchOAuthToken] Ошибка декодирования: \(error)")
+                    print("[fetchAuthToken] Ошибка декодирования: \(error)")
                     completion(.failure(error))
                 }
             case .failure(let error):
-                print("[fetchOAuthToken] Сетевая ошибка: \(error)")
+                print("[fetchAuthToken] Сетевая ошибка: \(error)")
                 completion(.failure(error))
             }
         }
@@ -49,6 +51,7 @@ final class OAuth2Service {
     
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
+            print("не удалось создать URLComponents")
             return nil
         }
         
@@ -60,7 +63,10 @@ final class OAuth2Service {
             URLQueryItem(name: "grant_type", value: "authorization_code"),
         ]
         
-        guard let url = urlComponents.url else { return nil }
+        guard let url = urlComponents.url else {
+            print("не удалось получить URL из URLComponents")
+            return nil
+        }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
