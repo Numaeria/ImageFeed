@@ -58,8 +58,9 @@ final class ProfileViewController: UIViewController {
         descriptionLabel.leadingAnchor.constraint(equalTo: loginNameLabel.leadingAnchor).isActive = true
         descriptionLabel.topAnchor.constraint(equalTo: loginNameLabel.bottomAnchor, constant: 8).isActive = true
         
+        guard let logoutImage = UIImage(systemName: "ipad.and.arrow.forward") else { return }
         leaveProfileButton = UIButton.systemButton(
-            with: UIImage(systemName: "ipad.and.arrow.forward")!,
+            with: logoutImage,
             target: self,
             action: #selector(didTapLogoutButton)
         )
@@ -73,12 +74,12 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func didTapLogoutButton() {
-        nameLabel.removeFromSuperview()
-        loginNameLabel.removeFromSuperview()
-        descriptionLabel.removeFromSuperview()
+        nameLabel?.removeFromSuperview()
+        loginNameLabel?.removeFromSuperview()
+        descriptionLabel?.removeFromSuperview()
         
-        avatarImageView.image = UIImage(systemName: "person.crop.circle.fill")
-        avatarImageView.tintColor = .gray
+        avatarImageView?.image = UIImage(systemName: "person.crop.circle.fill")
+        avatarImageView?.tintColor = .gray
     }
 }
 
