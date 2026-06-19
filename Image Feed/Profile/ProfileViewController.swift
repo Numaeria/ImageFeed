@@ -14,9 +14,25 @@ final class ProfileViewController: UIViewController {
     private var nameLabel: UILabel!
     private var loginNameLabel: UILabel!
     private var descriptionLabel: UILabel!
-    
+    private var profileImageServiceObserver: NSObjectProtocol?
+       
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let profile = ProfileService.shared.profile {
+            updateProfileDetails(profile: profile)
+        }
+        
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
         
         avatarImageView = UIImageView()
         avatarImageView.image = UIImage(named: "322")
@@ -80,6 +96,25 @@ final class ProfileViewController: UIViewController {
         
         avatarImageView?.image = UIImage(systemName: "person.crop.circle.fill")
         avatarImageView?.tintColor = .gray
+    }
+    
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+    }
+    
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name.isEmpty
+            ? "Имя не указано"
+            : profile.name
+        loginNameLabel.text = profile.loginName.isEmpty
+            ? "@неизвестный_пользователь"
+            : profile.loginName
+        descriptionLabel.text = (profile.bio?.isEmpty ?? true)
+            ? "Профиль не заполнен"
+            : profile.bio
     }
 }
 

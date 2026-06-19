@@ -10,28 +10,28 @@ import UIKit
 final class SplashViewController: UIViewController {
     
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
-
-    private let storage = OAuth2TokenStorage()
-
+    private let profileService = ProfileService.shared
+    private let storage = OAuth2TokenStorage.shared
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         if storage.token != nil {
             switchToTabBarController()
         } else {
             performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
         }
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNeedsStatusBarAppearanceUpdate()
     }
-
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
     }
-
+    
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
@@ -69,7 +69,29 @@ extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController) {
         vc.dismiss(animated: true)
         
-        switchToTabBarController()
+        guard let token = storage.token else {
+            return
+        }
+        
+        fetchProfile(token: token)
+    }
+    
+    private func fetchProfile(token: String) {
+        UIBlockingProgressHUD.show()
+        profileService.fetchProfile(token) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self = self else { return }
+            
+            switch result {
+            case let .success(profile):
+                ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in }
+                self.switchToTabBarController()
+                
+            case let .failure(error):
+                break
+            }
+        }
     }
 }
 
