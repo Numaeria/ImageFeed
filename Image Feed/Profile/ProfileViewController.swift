@@ -19,6 +19,7 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
         
         if let profile = ProfileService.shared.profile {
             updateProfileDetails(profile: profile)
@@ -34,12 +35,15 @@ final class ProfileViewController: UIViewController {
                 self.updateAvatar()
             }
         updateAvatar()
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = .black
         
         avatarImageView = UIImageView()
         avatarImageView.image = UIImage(named: "322")
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(avatarImageView)
-        
         avatarImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
         avatarImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32).isActive = true
         avatarImageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
@@ -51,7 +55,6 @@ final class ProfileViewController: UIViewController {
         nameLabel.text = "Екатерина Новикова"
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(nameLabel)
-        
         nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor).isActive = true
         nameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 8).isActive = true
         
@@ -61,30 +64,23 @@ final class ProfileViewController: UIViewController {
         loginNameLabel.text = "@ekaterina_nov"
         loginNameLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(loginNameLabel)
-        
         loginNameLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor).isActive = true
         loginNameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8).isActive = true
         
         descriptionLabel = UILabel()
         descriptionLabel.textColor = .white
         descriptionLabel.font = UIFont.systemFont(ofSize: 13)
-        descriptionLabel.text = "Hello,world!"
+        descriptionLabel.text = "Hello, world!"
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(descriptionLabel)
-        
         descriptionLabel.leadingAnchor.constraint(equalTo: loginNameLabel.leadingAnchor).isActive = true
         descriptionLabel.topAnchor.constraint(equalTo: loginNameLabel.bottomAnchor, constant: 8).isActive = true
         
         guard let logoutImage = UIImage(systemName: "ipad.and.arrow.forward") else { return }
-        leaveProfileButton = UIButton.systemButton(
-            with: logoutImage,
-            target: self,
-            action: #selector(didTapLogoutButton)
-        )
+        leaveProfileButton = UIButton.systemButton(with: logoutImage, target: self, action: #selector(didTapLogoutButton))
         leaveProfileButton.tintColor = UIColor(hex: "#F56B6C")
         leaveProfileButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(leaveProfileButton)
-        
         leaveProfileButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
         leaveProfileButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor).isActive = true
     }
@@ -94,7 +90,6 @@ final class ProfileViewController: UIViewController {
         nameLabel?.removeFromSuperview()
         loginNameLabel?.removeFromSuperview()
         descriptionLabel?.removeFromSuperview()
-        
         avatarImageView?.image = UIImage(systemName: "person.crop.circle.fill")
         avatarImageView?.tintColor = .gray
     }
